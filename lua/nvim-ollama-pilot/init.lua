@@ -1,14 +1,12 @@
 local ollama_pilot = {}
 
 ollama_pilot.setup = function(params)
-	print(params.guidance)
-	ollama_pilot.guidance = "Hello there"
+	ollama_pilot.guidance = params.guidance
 end
 
-ollama_pilot.request = function()
-	print("Guidance is: ", ollama_pilot.guidance)
+ollama_pilot.request = function(prompt)
 	local request = require("nvim-ollama-pilot.request")
-	request.send_post_request("How is it going?", function(response, error)
+	request.send_post_request(prompt, function(response, error)
 		if error then
 			print(error)
 		else
