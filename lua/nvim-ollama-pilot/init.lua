@@ -1,6 +1,7 @@
 local ollama_pilot = {}
 
 ollama_pilot.setup = function(params)
+	print(params)
 	ollama_pilot.guidance = "Hello there"
 end
 
