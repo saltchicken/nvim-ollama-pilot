@@ -2,6 +2,7 @@ local ollama_pilot = {}
 
 ollama_pilot.setup = function()
 	print("Setup was called")
+	print(config)
 end
 
 ollama_pilot.request = function()
