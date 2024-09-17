@@ -55,7 +55,7 @@ ollama_pilot.setup = function(params)
 			end, {})
 		end,
 	})
-	vim.keymap.set("i", "<C-Space>", ollama_pilot.run_current_line, { noremap = false, silent = true })
+	vim.keymap.set("i", "<C-l>", ollama_pilot.run_current_line, { noremap = false, silent = true })
 	-- vim.api.nvim_create_autocmd("TextChangedI", {
 	-- 	group = augroup,
 	-- 	desc = "On text changed",
