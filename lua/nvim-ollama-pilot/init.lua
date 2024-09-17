@@ -31,7 +31,7 @@ ollama_pilot.setup = function(params)
 		callback = function()
 			vim.api.nvim_create_user_command("OllamaPrompt", function(opts)
 				-- print("Sending prompt: ", opts.args)
-				ollama_pilot.request(opts.args)
+				ollama_pilot.request(opts.args, "")
 			end, { nargs = 1 })
 		end,
 	})
@@ -59,9 +59,9 @@ ollama_pilot.setup = function(params)
 	-- })
 end
 
-ollama_pilot.request = function(prompt)
+ollama_pilot.request = function(prompt, guidance)
 	local request = require("nvim-ollama-pilot.request")
-	request.send_post_request(prompt, ollama_pilot.opts, function(response, error)
+	request.send_post_request(prompt, guidance, function(response, error)
 		if error then
 			print(error)
 		else
@@ -69,7 +69,7 @@ ollama_pilot.request = function(prompt)
 			local decoded_response = json.decode(response)
 			print("Response: ", decoded_response.response)
 		end
-	end)
+	end, ollama_pilot.opts)
 end
 
 return ollama_pilot
