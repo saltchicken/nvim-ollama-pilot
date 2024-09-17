@@ -1,4 +1,5 @@
 local ollama_pilot = {}
+ollama_pilot.opts = {}
 
 ollama_pilot.setup = function(params)
 	ollama_pilot.opts.guidance = params.guidance
