@@ -45,9 +45,7 @@ ollama_pilot.setup = function(params)
 				-- local buffer = get_current_buffer()
 				-- print(buffer)
 				local lines = get_current_line()
-				for _, line in ipairs(lines) do
-					print(line)
-				end
+				print(lines[0])
 			end, {})
 		end,
 	})
