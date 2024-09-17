@@ -67,7 +67,8 @@ ollama_pilot.setup = function(params)
 end
 
 ollama_pilot.request = function(prompt, guidance)
-	print(prompt:gsub("^[%s>]+", ""))
+	local test = prompt:gsub("^[%s>]+", "")
+	print(test)
 	for i = 1, #prompt do
 		local char = string.sub(prompt, i, i)
 		if char == ">" then
