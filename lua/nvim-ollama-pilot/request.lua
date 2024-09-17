@@ -8,7 +8,7 @@ request.send_post_request = function(prompt, callback)
 		guidance_string,
 		prompt:gsub('"', '\\"')
 	)
-	-- This needs to be a debugging thing
+	-- TODO: This needs to be a debugging thing
 	print("Prompt String: ", prompt_string)
 	Job:new({
 		command = "curl",
