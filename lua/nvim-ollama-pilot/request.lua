@@ -1,11 +1,10 @@
 local request = {}
 
-request.send_post_request = function(prompt, callback)
+request.send_post_request = function(prompt, opts, callback)
 	local Job = require("plenary.job")
-	local guidance_string = ""
 	local prompt_string = string.format(
 		'{"model": "llama3.1", "prompt": "%s%s", "stream": false}',
-		guidance_string,
+		opts.guidance,
 		prompt:gsub('"', '\\"')
 	)
 	-- TODO: This needs to be a debugging thing
