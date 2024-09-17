@@ -3,6 +3,19 @@ local function get_current_buffer()
 	return vim.api.nvim_buf_get_lines(buf, 0, -1, false)
 end
 
+local function get_cursor_line()
+	local cursor_pos = vim.api.nvim_win_get_cursor(0)
+	local line_index = cursor_pos[1] - 1
+	return line_index
+end
+
+local function get_current_line()
+	local buf = vim.api.nvim.get_current_buf()
+	local line_index = get_cursor_line()
+	local line = vim.api.nvim_buf_get_lines(buf, line_index, line_index, false)
+	return line
+end
+
 local ollama_pilot = {}
 ollama_pilot.opts = {}
 
@@ -29,8 +42,10 @@ ollama_pilot.setup = function(params)
 		once = true,
 		callback = function()
 			vim.api.nvim_create_user_command("OllamaTest", function()
-				local buffer = get_current_buffer()
-				print(buffer)
+				-- local buffer = get_current_buffer()
+				-- print(buffer)
+				local line = get_current_line()
+				print(line)
 			end, {})
 		end,
 	})
