@@ -30,7 +30,7 @@ ollama_pilot.setup = function(params)
 		callback = function()
 			vim.api.nvim_create_user_command("OllamaTest", function()
 				get_current_buffer()
-			end)
+			end, {})
 		end,
 	})
 	-- vim.api.nvim_create_autocmd("TextChangedI", {
