@@ -44,8 +44,10 @@ ollama_pilot.setup = function(params)
 			vim.api.nvim_create_user_command("OllamaTest", function()
 				-- local buffer = get_current_buffer()
 				-- print(buffer)
-				local line = get_current_line()
-				print(line)
+				local lines = get_current_line()
+				for _, line in ipairs(lines) do
+					print(line)
+				end
 			end, {})
 		end,
 	})
