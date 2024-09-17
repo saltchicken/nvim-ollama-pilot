@@ -17,6 +17,14 @@ ollama_pilot.setup = function(params)
 			end, { nargs = 1 })
 		end,
 	})
+	vim.api.nvim_create_autocmd("TextChangedI", {
+		group = augroup,
+		desc = "On text changed",
+		once = false,
+		callback = function()
+			print("Text changed")
+		end,
+	})
 end
 
 ollama_pilot.request = function(prompt)
