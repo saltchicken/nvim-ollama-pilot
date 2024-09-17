@@ -12,7 +12,7 @@ ollama_pilot.setup = function(params)
 		once = true,
 		callback = function()
 			vim.api.nvim_create_user_command("Ollamaprompt", function(opts)
-				print("Sending prompt: ", opts.args)
+				print("Sending prompt: ", opts.args[0])
 			end, { nargs = 1 })
 		end,
 	})
