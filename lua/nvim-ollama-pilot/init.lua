@@ -4,6 +4,18 @@ ollama_pilot.opts = {}
 ollama_pilot.setup = function(params)
 	ollama_pilot.opts.guidance = params.guidance
 	ollama_pilot.opts.debug = params.debug
+
+	local augroup = vim.api.nvim_create_augroup("Ollama Pilot", { clear = true })
+	vim.api.nvim_create_autocmd("VimEnter", {
+		group = augroup,
+		desc = "Send request to ollama",
+		once = true,
+		callback = function()
+			vim.api.nvim_create_user_command("ollamaprompt", function(opts)
+				print("Sending prompt: ", opts.args)
+			end, { nargs = 1 })
+		end,
+	})
 end
 
 ollama_pilot.request = function(prompt)
@@ -20,3 +32,21 @@ ollama_pilot.request = function(prompt)
 end
 
 return ollama_pilot
+
+-- local function setup()
+-- 	local augroup = vim.api.nvim_create_augroup("ExamplePlugin", { clear = true })
+-- 	vim.api.nvim_create_autocmd(
+-- 		"VimEnter",
+-- 		-- { group = augroup, desc = "An example plugin", once = true, callback = main }
+-- 		{
+-- 			group = augroup,
+-- 			desc = "Test function",
+-- 			once = true,
+-- 			callback = function()
+-- 				vim.api.nvim_create_user_command("TestingCommand", function(opts)
+-- 					print("Working with " .. opts.args .. "!")
+-- 				end, { nargs = 1 })
+-- 			end,
+-- 		}
+-- 	)
+-- end

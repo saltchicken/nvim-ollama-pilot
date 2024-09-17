@@ -2,6 +2,7 @@ local request = {}
 
 request.send_post_request = function(prompt, opts, callback)
 	local Job = require("plenary.job")
+	-- TODO: Dynamically changed delimiter \\n\\n if there isn't a guidance string
 	local prompt_string = string.format(
 		'{"model": "llama3.1", "prompt": "%s\\n\\n%s", "stream": false}',
 		opts.guidance,
