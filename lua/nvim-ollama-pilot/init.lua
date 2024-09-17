@@ -10,7 +10,7 @@ local function get_cursor_line()
 end
 
 local function get_current_line()
-	local buf = vim.api.nvim.get_current_buf()
+	local buf = vim.api.nvim_get_current_buf()
 	local line_index = get_cursor_line()
 	local line = vim.api.nvim_buf_get_lines(buf, line_index, line_index, false)
 	return line
