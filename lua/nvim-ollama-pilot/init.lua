@@ -67,14 +67,13 @@ ollama_pilot.setup = function(params)
 end
 
 ollama_pilot.request = function(prompt, guidance)
-	local utf8 = require("utf8")
-	for i, cp in utf8.codes(prompt) do
-		print(cp)
+	for i = 1, #prompt do
+		local char = string.sub(prompt, i, i)
+		if char == ">" then
+			print("found")
+		end
+		print(char)
 	end
-	-- for i = 1, #prompt do
-	-- 	local char = string.sub(prompt, i, i)
-	-- 	print(char)
-	-- end
 	local request = require("nvim-ollama-pilot.request")
 	request.send_post_request(prompt, guidance, function(response, error)
 		if error then
