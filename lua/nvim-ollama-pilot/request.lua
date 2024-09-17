@@ -10,7 +10,7 @@ request.send_post_request = function(prompt, guidance, callback, opts)
 	local prompt_string = string.format(
 		'{"model": "llama3.1", "prompt": "%s%s", "stream": false}',
 		guidance,
-		prompt:gsub('"', '\\"'):gsub("\t", "")
+		prompt:gsub('"', '\\"'):gsub("\t", "\\t")
 	)
 	if opts.debug then
 		print("Prompt String: ", prompt_string)
