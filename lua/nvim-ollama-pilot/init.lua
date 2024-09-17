@@ -67,7 +67,7 @@ ollama_pilot.setup = function(params)
 end
 
 ollama_pilot.request = function(prompt, guidance)
-	local test = prompt:gsub("^[%s>]+", "")
+	local test = prompt:gsub("[^%w%s%p]", "")
 	print(test)
 	for i = 1, #prompt do
 		local char = string.sub(prompt, i, i)
