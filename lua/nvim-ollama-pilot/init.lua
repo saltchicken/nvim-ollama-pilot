@@ -19,6 +19,12 @@ end
 local ollama_pilot = {}
 ollama_pilot.opts = {}
 
+ollama_pilot.run_current_line = function()
+	local line = get_current_line()
+	-- TODO: Replace nil with the guidance we want for current line as prompt
+	ollama_pilot.request(line, nil)
+end
+
 ollama_pilot.setup = function(params)
 	ollama_pilot.opts.guidance = params.guidance
 	ollama_pilot.opts.debug = params.debug
@@ -31,7 +37,7 @@ ollama_pilot.setup = function(params)
 		callback = function()
 			vim.api.nvim_create_user_command("OllamaPrompt", function(opts)
 				-- print("Sending prompt: ", opts.args)
-				ollama_pilot.request(opts.args, "Speak like a pirate")
+				ollama_pilot.request(opts.args, nil)
 			end, { nargs = 1 })
 		end,
 	})
@@ -49,6 +55,7 @@ ollama_pilot.setup = function(params)
 			end, {})
 		end,
 	})
+	vim.keymap.set("i", "<C-Space>", ollama_pilot.run_current_line, { noremap = true, silent = true })
 	-- vim.api.nvim_create_autocmd("TextChangedI", {
 	-- 	group = augroup,
 	-- 	desc = "On text changed",
