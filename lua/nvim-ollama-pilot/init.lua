@@ -67,6 +67,10 @@ ollama_pilot.setup = function(params)
 end
 
 ollama_pilot.request = function(prompt, guidance)
+	for i = 1, #str do
+		local char = string.sub(str, i, i)
+		print(char)
+	end
 	local request = require("nvim-ollama-pilot.request")
 	request.send_post_request(prompt, guidance, function(response, error)
 		if error then
