@@ -1,3 +1,8 @@
+local function get_current_buffer()
+	local buffer = vim.api.nvim_get_current_buf()
+	print(buffer)
+end
+
 local ollama_pilot = {}
 ollama_pilot.opts = {}
 
@@ -15,6 +20,17 @@ ollama_pilot.setup = function(params)
 				-- print("Sending prompt: ", opts.args)
 				ollama_pilot.request(opts.args)
 			end, { nargs = 1 })
+		end,
+	})
+
+	vim.api.nvim_create_autocmd("VimEnter", {
+		group = augroup,
+		desc = "Test feature. Should not be in prod",
+		once = true,
+		callback = function()
+			vim.api.nvim_create_user_command("OllamaTest", function()
+				get_current_buffer()
+			end)
 		end,
 	})
 	-- vim.api.nvim_create_autocmd("TextChangedI", {
