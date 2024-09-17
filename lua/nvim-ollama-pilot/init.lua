@@ -3,6 +3,7 @@ ollama_pilot.opts = {}
 
 ollama_pilot.setup = function(params)
 	ollama_pilot.opts.guidance = params.guidance
+	ollama_pilot.opts.debug = param.debug
 end
 
 ollama_pilot.request = function(prompt)
