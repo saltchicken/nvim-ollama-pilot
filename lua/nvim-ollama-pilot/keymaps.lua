@@ -12,7 +12,7 @@ keymaps.set_keymaps = function()
 			vim.keymap.set(
 				"i",
 				"<C-l>",
-				require("nvim-ollama-pilot.init").run_current_line,
+				require("nvim-ollama-pilot.core").run_current_line,
 				{ noremap = false, silent = true }
 			)
 		end,
