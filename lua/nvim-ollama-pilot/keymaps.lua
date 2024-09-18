@@ -1,6 +1,7 @@
 local keymaps = {}
 
 keymaps.set_keymaps = function()
+	-- TODO: Fix augroup naming
 	local augroup = vim.api.nvim_create_augroup("Ollama Pilot2", { clear = true })
 	vim.api.nvim_create_autocmd("VimEnter", {
 		group = augroup,

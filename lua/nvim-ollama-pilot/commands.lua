@@ -11,14 +11,7 @@ commands.set_commands = function()
 				-- print("Sending prompt: ", opts.args)
 				require("nvim-ollama-pilot.request").request(opts.args, nil)
 			end, { nargs = 1 })
-		end,
-	})
 
-	vim.api.nvim_create_autocmd("VimEnter", {
-		group = augroup,
-		desc = "Test feature. Should not be in prod",
-		once = true,
-		callback = function()
 			vim.api.nvim_create_user_command("OllamaTest", function()
 				-- local buffer = get_current_buffer()
 				-- print(buffer)
