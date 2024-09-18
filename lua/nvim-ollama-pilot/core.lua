@@ -17,7 +17,7 @@ end
 
 core.run_current_selection = function()
 	local selection = require("nvim-ollama-pilot.buffer").get_current_selection()
-	print(selection)
+	require("nvim-ollama-pilot.request").request(selection, nil)
 end
 
 return core

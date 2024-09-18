@@ -19,8 +19,6 @@ buffer.get_current_line = function()
 end
 
 buffer.get_current_selection = function()
-	print("Running get_current_selection")
-	-- local buf = vim.api.nvim_get_current_buf()
 	local start_pos = vim.fn.getpos("v")
 	local end_pos = vim.fn.getpos(".")
 
@@ -29,24 +27,32 @@ buffer.get_current_selection = function()
 	local end_row = end_pos[2]
 	local end_col = end_pos[3]
 
-	local lines = vim.fn.getline(start_row, end_row)
-
-	for i, lines in ipairs(lines) do
-		print(i, ":", lines)
+	-- This is needed because start and end are switched depending on how user selects.
+	-- This ensures that start row is on top. Also col needs to switch to stay consistent.
+	if start_row > end_row then
+		start_row, end_row = end_row, start_row
+		start_col, end_col = end_col, start_col
 	end
-	-- if #lines == 1 then
-	-- 	lines[1] = string.sub(lines[1], start_pos[3], end_pos[3])
-	-- else
-	-- 	lines[1] = string.sub(lines[1], start_pos[3])
-	-- 	lines[#lines] = string.sub(lines[#lines], 1, end_pos[3])
-	-- end
 
-	-- local payload = ""
-	-- for _, line in ipairs(lines) do
-	-- 	payload = payload .. line
-	-- end
-	-- return payload
-	-- return table.concat(lines, "\n")
+	-- print("Start_row: ", start_row, " End_row ", end_row)
+	-- print("Start_col: ", start_col, " End_col ", end_col)
+
+	local buf = vim.api.nvim_get_current_buf()
+	local lines = vim.api.nvim_buf_get_lines(buf, start_row - 1, end_row, false)
+
+	local current_mode = vim.fn.mode()
+	if current_mode == "v" then
+		-- Visual mode. Handle cursor column position
+		lines[1] = string.sub(lines[1], start_col)
+		lines[#lines] = string.sub(lines[#lines], 0, end_col)
+		return table.concat(lines, "\n")
+	elseif current_mode == "V" then
+		-- Visual Line mode.
+		return table.concat(lines, "\\n")
+	else
+		print("ERROR: Not in Visual or Visual Line mode")
+		return nil
+	end
 end
 
 return buffer
