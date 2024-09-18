@@ -1,6 +1,11 @@
 local request = {}
+request.opts = {}
 
-request.send_post_request = function(prompt, guidance, callback, opts)
+request.setup = function(opts)
+	request.opts = opts
+end
+
+local function send_post_request(prompt, guidance, callback, opts)
 	local Job = require("plenary.job")
 	if guidance then
 		guidance = guidance .. "\\n\\n"
@@ -36,6 +41,18 @@ request.send_post_request = function(prompt, guidance, callback, opts)
 			end
 		end,
 	}):start()
+end
+
+request.request = function(prompt, guidance)
+	send_post_request(prompt, guidance, function(response, error)
+		if error then
+			print(error)
+		else
+			local json = require("nvim-ollama-pilot.json")
+			local decoded_response = json.decode(response)
+			print("RESPONSE: ", decoded_response.response)
+		end
+	end, request.opts)
 end
 
 return request

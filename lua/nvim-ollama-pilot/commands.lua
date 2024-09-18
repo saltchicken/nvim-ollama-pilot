@@ -9,7 +9,7 @@ commands.set_commands = function()
 		callback = function()
 			vim.api.nvim_create_user_command("OllamaPrompt", function(opts)
 				-- print("Sending prompt: ", opts.args)
-				require("nvim-ollama-pilot.init").request(opts.args, nil)
+				require("nvim-ollama-pilot.request").request(opts.args, nil)
 			end, { nargs = 1 })
 		end,
 	})
