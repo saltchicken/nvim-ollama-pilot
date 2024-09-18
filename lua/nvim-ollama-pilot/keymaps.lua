@@ -16,6 +16,12 @@ keymaps.set_keymaps = function()
 				require("nvim-ollama-pilot.core").run_current_line,
 				{ noremap = false, silent = true }
 			)
+			vim.keymap.set(
+				"v",
+				"<C-l>",
+				require("nvim-ollama-pilot.core").run_current_selection,
+				{ noremap = false, silent = true }
+			)
 		end,
 	})
 end

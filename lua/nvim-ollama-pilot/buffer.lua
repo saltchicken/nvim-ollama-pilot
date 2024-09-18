@@ -18,4 +18,35 @@ buffer.get_current_line = function()
 	return lines[1]
 end
 
+buffer.get_current_selection = function()
+	print("Running get_current_selection")
+	-- local buf = vim.api.nvim_get_current_buf()
+	local start_pos = vim.fn.getpos("v")
+	local end_pos = vim.fn.getpos(".")
+
+	local start_row = start_pos[2]
+	local start_col = start_pos[3]
+	local end_row = end_pos[2]
+	local end_col = end_pos[3]
+
+	local lines = vim.fn.getline(start_row, end_row)
+
+	for i, lines in ipairs(lines) do
+		print(i, ":", lines)
+	end
+	-- if #lines == 1 then
+	-- 	lines[1] = string.sub(lines[1], start_pos[3], end_pos[3])
+	-- else
+	-- 	lines[1] = string.sub(lines[1], start_pos[3])
+	-- 	lines[#lines] = string.sub(lines[#lines], 1, end_pos[3])
+	-- end
+
+	-- local payload = ""
+	-- for _, line in ipairs(lines) do
+	-- 	payload = payload .. line
+	-- end
+	-- return payload
+	-- return table.concat(lines, "\n")
+end
+
 return buffer

@@ -17,6 +17,12 @@ commands.set_commands = function()
 				-- print(buffer)
 				local line = require("nvim-ollama-pilot.buffer").get_current_line()
 				print(line)
+				-- local selection = require("nvim-ollama-pilot.buffer").get_current_selection()
+				-- print(selection)
+			end, {})
+
+			vim.api.nvim_create_user_command("OllamaAnalyze", function()
+				require("nvim-ollama-pilot.core").run_current_buffer()
 			end, {})
 		end,
 	})

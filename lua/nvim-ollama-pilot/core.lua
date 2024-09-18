@@ -8,7 +8,16 @@ end
 
 core.run_current_buffer = function()
 	local buffer = require("nvim-ollama-pilot.buffer").get_current_buffer()
-	require("nvim-ollama-pilot.request").request(buffer, nil)
+	local payload = ""
+	for _, line in ipairs(buffer) do
+		payload = payload .. line
+	end
+	require("nvim-ollama-pilot.request").request(payload, nil)
+end
+
+core.run_current_selection = function()
+	local selection = require("nvim-ollama-pilot.buffer").get_current_selection()
+	print(selection)
 end
 
 return core
