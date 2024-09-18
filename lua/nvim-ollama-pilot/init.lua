@@ -35,6 +35,9 @@ ollama_pilot.setup = function(params)
 		desc = "Send request to ollama",
 		once = true,
 		callback = function()
+			-- TODO: This needs to be refactored modified via plugin config
+			-- Set Control Space to run_current_line
+			vim.keymap.set("i", "<C-Space>", ollama_pilot.run_current_line, { noremap = false, silent = true })
 			vim.api.nvim_create_user_command("OllamaPrompt", function(opts)
 				-- print("Sending prompt: ", opts.args)
 				ollama_pilot.request(opts.args, nil)
@@ -55,7 +58,6 @@ ollama_pilot.setup = function(params)
 			end, {})
 		end,
 	})
-	vim.keymap.set("i", "<C-l>", ollama_pilot.run_current_line, { noremap = false, silent = true })
 	-- vim.api.nvim_create_autocmd("TextChangedI", {
 	-- 	group = augroup,
 	-- 	desc = "On text changed",
