@@ -1,4 +1,10 @@
 local buffer = {}
+buffer.state = {
+	ghost_text_visible = 0,
+}
+buffer.restore_keys = function()
+	print("Restore keys hasn't been set yet")
+end
 
 buffer.get_current_buffer = function()
 	local buf = vim.api.nvim_get_current_buf()
@@ -55,6 +61,50 @@ buffer.get_current_selection = function()
 	end
 end
 
+function replace_keymap(mode, lhs, rhs, opts)
+	-- Save the original keymap
+	local original_map = vim.api.nvim_get_keymap(mode)
+	local original_rhs = nil
+
+	for _, map in pairs(original_map) do
+		if map.lhs == lhs then
+			original_rhs = map.rhs
+			break
+		end
+	end
+
+	-- Set the new keymap
+	vim.api.nvim_set_keymap(mode, lhs, rhs, opts or {})
+
+	-- Return a function to restore the original keymap
+	return function()
+		if original_rhs then
+			vim.api.nvim_set_keymap(mode, lhs, original_rhs, opts or {})
+		else
+			-- If there was no original mapping, remove the keymap
+			vim.api.nvim_del_keymap(mode, lhs)
+		end
+	end
+end
+
+buffer.cleanup = function()
+	buffer.restore_keys()
+
+	local buf = vim.api.nvim_get_current_buf()
+
+	print("Restoring the buffer")
+	local cursor_pos = vim.api.nvim_win_get_cursor(0)
+	local current_line = buffer.get_current_line()
+	print("Debugging current_line ", current_line)
+	-- local inserted_ghost_text = string.sub(current_line, 0, cursor_pos[2])
+	local pre_line = string.sub(current_line, 0, cursor_pos[2])
+	local post_line = string.sub(current_line, cursor_pos[2] + 1 + buffer.state.ghost_text_visible)
+	-- local inserted_ghost_text = string.sub(inserted_ghost_text, buffer.state.ghost_text_visible)
+	local restored_line = pre_line .. post_line
+	local line = cursor_pos[1] - 1
+	vim.api.nvim_buf_set_lines(buf, line, line + 1, false, { restored_line })
+end
+
 buffer.insert_ghost_text = function()
 	local text = "Testing insert"
 	local buf = vim.api.nvim_get_current_buf()
@@ -67,10 +117,13 @@ buffer.insert_ghost_text = function()
 	local pre_line = string.sub(current_line, 0, cursor_pos[2])
 	local post_line = string.sub(current_line, cursor_pos[2] + 1)
 	local line_with_ghost_text = pre_line .. text .. post_line
+	buffer.state.ghost_text_visible = #text
 	vim.api.nvim_buf_set_lines(buf, line, line + 1, false, { line_with_ghost_text })
 	-- vim.api.nvim_create_namespace()
-	-- vim.api.nvim_buf_clear_namespace()
+	-- vim.api.nvim_buf_clear_namespace(Testing insert)
 	vim.api.nvim_buf_add_highlight(buf, -1, "GhostTextOllama", line, cursor_pos[2], cursor_pos[2] + #text)
+	buffer.restore_keys =
+		replace_keymap("i", "<Esc>", '<C-o>:lua require("nvim-ollama-pilot").cleanup()<CR>', { noremap = true })
 end
 
 return buffer
