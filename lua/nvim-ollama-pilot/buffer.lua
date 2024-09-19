@@ -55,4 +55,22 @@ buffer.get_current_selection = function()
 	end
 end
 
+buffer.insert_ghost_text = function()
+	local text = "Testing insert"
+	local buf = vim.api.nvim_get_current_buf()
+
+	local cursor_pos = vim.api.nvim_win_get_cursor(0)
+	local line = cursor_pos[1] - 1
+
+	local current_line = buffer.get_current_line()
+	-- TODO: This only works on a single line. Needs to return the whole buffer for multiline
+	local pre_line = string.sub(current_line, 0, cursor_pos[2])
+	local post_line = string.sub(current_line, cursor_pos[2] + 1)
+	local line_with_ghost_text = pre_line .. text .. post_line
+	vim.api.nvim_buf_set_lines(buf, line, line + 1, false, { line_with_ghost_text })
+	-- vim.api.nvim_create_namespace()
+	-- vim.api.nvim_buf_clear_namespace()
+	vim.api.nvim_buf_add_highlight(buf, -1, "GhostTextOllama", line, cursor_pos[2], cursor_pos[2] + #text)
+end
+
 return buffer
