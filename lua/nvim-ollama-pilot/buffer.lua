@@ -2,6 +2,10 @@ local buffer = {}
 buffer.state = {
 	ghost_text_visible = 0,
 }
+
+local original_keymaps = {}
+local ghost_text_ns_id
+
 buffer.restore_keys = function()
 	print("Restore keys hasn't been set yet")
 end
@@ -86,6 +90,67 @@ function replace_keymap(mode, lhs, rhs, opts)
 		end
 	end
 end
+--
+-- function buffer.set_temporary_keymaps()
+-- 	print("temp keymaps set")
+-- 	original_keymaps["<Esc>"] = vim.api.nvim_get_keymap("i") -- for 'Escape' in normal mode
+-- 	original_keymaps["<Tab>"] = vim.api.nvim_get_keymap("i") -- for 'Tab' in normal mode
+--
+-- 	vim.api.nvim_set_keymap(
+-- 		"i",
+-- 		"<Esc>",
+-- 		":lua require('nvim-ollama-pilot.buffer').on_esc_press()<CR>",
+-- 		{ noremap = true, silent = true }
+-- 	)
+-- 	vim.api.nvim_set_keymap(
+-- 		"i",
+-- 		"<Tab>",
+-- 		":lua require('nvim-ollama-pilot.buffer').on_tab_press()<CR>",
+-- 		{ noremap = true, silent = true }
+-- 	)
+-- end
+--
+-- function buffer.on_esc_press()
+-- 	print("escape pressed")
+-- 	buffer.revert_keymaps()
+-- end
+--
+-- function buffer.on_tab_press()
+-- 	print("tab pressed")
+-- 	buffer.revert_keymaps()
+-- end
+--
+-- function buffer.revert_keymaps()
+-- 	-- Revert 'Escape' keymap
+-- 	if original_keymaps["<Esc>"] then
+-- 		vim.api.nvim_del_keymap("i", "<Esc>")
+-- 		for _, mapping in ipairs(original_keymaps["<Esc>"]) do
+-- 			if mapping.lhs == "<Esc>" then
+-- 				vim.api.nvim_set_keymap(
+-- 					"i",
+-- 					mapping.lhs,
+-- 					mapping.rhs,
+-- 					{ noremap = mapping.noremap, silent = mapping.silent }
+-- 				)
+-- 			end
+-- 		end
+-- 	end
+--
+-- 	-- Revert 'Tab' keymap
+-- 	if original_keymaps["<Tab>"] then
+-- 		vim.api.nvim_del_keymap("i", "<Tab>")
+-- 		for _, mapping in ipairs(original_keymaps["<Tab>"]) do
+-- 			if mapping.lhs == "<Tab>" then
+-- 				vim.api.nvim_set_keymap(
+-- 					"i",
+-- 					mapping.lhs,
+-- 					mapping.rhs,
+-- 					{ noremap = mapping.noremap, silent = mapping.silent }
+-- 				)
+-- 			end
+-- 		end
+-- 	end
+-- end
 
 buffer.cleanup = function()
 	buffer.restore_keys()
@@ -105,8 +170,16 @@ buffer.cleanup = function()
 	vim.api.nvim_buf_set_lines(buf, line, line + 1, false, { restored_line })
 end
 
-buffer.insert_ghost_text = function()
-	local text = "Testing insert"
+buffer.clear_ghost_text_highlight = function()
+	local buf = vim.api.nvim_get_current_buf()
+	vim.api.nvim_buf_clear_namespace(buf, ghost_text_ns_id, 0, -1)
+end
+
+buffer.insert_ghost_text = function(text)
+	-- TODO: Enable multiline ghost text
+	-- Return the first line of the output. Error if not
+	local new_text = string.match(text, "^[^\r\n]*")
+	text = new_text
 	local buf = vim.api.nvim_get_current_buf()
 
 	local cursor_pos = vim.api.nvim_win_get_cursor(0)
@@ -119,11 +192,18 @@ buffer.insert_ghost_text = function()
 	local line_with_ghost_text = pre_line .. text .. post_line
 	buffer.state.ghost_text_visible = #text
 	vim.api.nvim_buf_set_lines(buf, line, line + 1, false, { line_with_ghost_text })
-	-- vim.api.nvim_create_namespace()
+	ghost_text_ns_id = vim.api.nvim_create_namespace("ghost_text_ollama_pilot")
 	-- vim.api.nvim_buf_clear_namespace(Testing insert)
-	vim.api.nvim_buf_add_highlight(buf, -1, "GhostTextOllama", line, cursor_pos[2], cursor_pos[2] + #text)
+	vim.api.nvim_buf_add_highlight(buf, ghost_text_ns_id, "GhostTextOllama", line, cursor_pos[2], cursor_pos[2] + #text)
+	-- buffer.set_temporary_keymaps()
 	buffer.restore_keys =
 		replace_keymap("i", "<Esc>", '<C-o>:lua require("nvim-ollama-pilot").cleanup()<CR>', { noremap = true })
+end
+
+buffer.wrapped_insert_ghost_text = function(text)
+	vim.schedule_wrap(function()
+		buffer.insert_ghost_text(text)
+	end)()
 end
 
 return buffer

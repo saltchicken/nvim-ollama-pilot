@@ -23,12 +23,12 @@ keymaps.set_keymaps = function()
 				{ noremap = false, silent = true }
 			)
 			-- This keymap only used for testing
-			vim.keymap.set(
-				"i",
-				"<C-a>",
-				require("nvim-ollama-pilot.buffer").insert_ghost_text,
-				{ noremap = false, silent = true }
-			)
+			-- vim.keymap.set(
+			-- 	"i",
+			-- 	"<C-a>",
+			-- 	require("nvim-ollama-pilot.buffer").insert_ghost_text,
+			-- 	{ noremap = false, silent = true }
+			-- )
 		end,
 	})
 end

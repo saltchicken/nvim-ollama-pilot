@@ -3,7 +3,10 @@ local core = {}
 core.run_current_line = function()
 	local line = require("nvim-ollama-pilot.buffer").get_current_line()
 	-- TODO: Replace nil with the guidance we want for current line as prompt
-	require("nvim-ollama-pilot.request").request(line, nil)
+	local guidance =
+		"You are being used for code completion. Only respond with the continuation of the given line of code."
+	-- require("nvim-ollama-pilot.request").request(line, nil)
+	require("nvim-ollama-pilot.request").request(line, guidance)
 end
 
 core.run_current_buffer = function()
