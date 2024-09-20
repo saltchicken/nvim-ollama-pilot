@@ -28,6 +28,12 @@ ghost_text.accept = function()
 	require("nvim-ollama-pilot.keymaps").restore_keys()
 	local buf = vim.api.nvim_get_current_buf()
 	vim.api.nvim_buf_clear_namespace(buf, ghost_text.state.highlight_namespace, 0, -1)
+
+	local cursor = vim.api.nvim_win_get_cursor(0)
+	local row = cursor[1]
+	local col = cursor[2]
+
+	vim.api.nvim_win_set_cursor(0, { row, col + #ghost_text.state.text })
 end
 
 ghost_text.insert_ghost_text = function(text)
