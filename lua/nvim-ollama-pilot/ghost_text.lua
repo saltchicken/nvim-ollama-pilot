@@ -24,6 +24,11 @@ ghost_text.cleanup = function()
 	vim.api.nvim_buf_set_lines(buf, line, line + 1, false, { restored_line })
 end
 
+ghost_text.accept = function()
+	require("nvim-ollama-pilot.keymaps").restore_keys()
+	print("Accept")
+end
+
 ghost_text.clear_ghost_text_highlight = function()
 	local buf = vim.api.nvim_get_current_buf()
 	vim.api.nvim_buf_clear_namespace(buf, ghost_text.state.highlight_namespace, 0, -1)

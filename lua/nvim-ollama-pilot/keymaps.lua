@@ -1,5 +1,7 @@
 local keymaps = {}
 
+local restore_functions = {}
+
 keymaps.set_keymaps = function()
 	-- TODO: Fix augroup naming
 	local augroup = vim.api.nvim_create_augroup("Ollama Pilot2", { clear = true })
@@ -34,15 +36,31 @@ keymaps.set_keymaps = function()
 end
 
 keymaps.restore_keys = function()
-	print("Restore keys hasn't been set yet")
+	for _, restore in ipairs(restore_functions) do
+		restore()
+	end
 end
 
 keymaps.set_ghost_text_keymap = function()
-	keymaps.restore_keys = require("nvim-ollama-pilot.keymaps").replace_keymap(
-		"i",
-		"<Esc>",
-		'<C-o>:lua require("nvim-ollama-pilot.ghost_text").cleanup()<CR>',
-		{ noremap = true }
+	-- Replace Escape
+	table.insert(
+		restore_functions,
+		require("nvim-ollama-pilot.keymaps").replace_keymap(
+			"i",
+			"<Esc>",
+			'<C-o>:lua require("nvim-ollama-pilot.ghost_text").cleanup()<CR>',
+			{ noremap = true }
+		)
+	)
+	-- Replace Tab
+	table.insert(
+		restore_functions,
+		require("nvim-ollama-pilot.keymaps").replace_keymap(
+			"i",
+			"<Tab>",
+			'<C-o>:lua require("nvim-ollama-pilot.ghost_text").accept()<CR>',
+			{ noremap = true }
+		)
 	)
 end
 
