@@ -2,7 +2,7 @@ local ghost_text = {}
 
 ghost_text.state = {}
 
-local create_ghost_text_object = function(text, highlight_namespace)
+local set_ghost_text_state = function(text, highlight_namespace)
 	ghost_text.state = {}
 	ghost_text.state.text = text
 	ghost_text.state.highlight_namespace = highlight_namespace
@@ -54,7 +54,7 @@ ghost_text.insert_ghost_text = function(text)
 
 	local ghost_text_ns_id = vim.api.nvim_create_namespace("ghost_text_ollama_pilot")
 
-	create_ghost_text_object(text, ghost_text_ns_id)
+	set_ghost_text_state(text, ghost_text_ns_id)
 
 	vim.api.nvim_buf_add_highlight(buf, ghost_text_ns_id, "GhostTextOllama", line, cursor_pos[2], cursor_pos[2] + #text)
 
