@@ -8,7 +8,7 @@ local create_ghost_text_object = function(text, highlight_namespace)
 	ghost_text.state.highlight_namespace = highlight_namespace
 end
 
-ghost_text.cleanup = function()
+ghost_text.abort = function()
 	require("nvim-ollama-pilot.keymaps").restore_keys()
 
 	local buf = vim.api.nvim_get_current_buf()
@@ -26,10 +26,6 @@ end
 
 ghost_text.accept = function()
 	require("nvim-ollama-pilot.keymaps").restore_keys()
-	print("Accept")
-end
-
-ghost_text.clear_ghost_text_highlight = function()
 	local buf = vim.api.nvim_get_current_buf()
 	vim.api.nvim_buf_clear_namespace(buf, ghost_text.state.highlight_namespace, 0, -1)
 end

@@ -48,7 +48,7 @@ keymaps.set_ghost_text_keymap = function()
 		require("nvim-ollama-pilot.keymaps").replace_keymap(
 			"i",
 			"<Esc>",
-			'<C-o>:lua require("nvim-ollama-pilot.ghost_text").cleanup()<CR>',
+			'<C-o>:lua require("nvim-ollama-pilot.ghost_text").abort()<CR>',
 			{ noremap = true }
 		)
 	)
