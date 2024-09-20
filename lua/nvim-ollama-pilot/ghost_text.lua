@@ -6,40 +6,8 @@ ghost_text.state = {
 
 local ghost_text_ns_id
 
-local original_keymaps = {}
-
-ghost_text.restore_keys = function()
-	print("Restore keys hasn't been set yet")
-end
-
-function replace_keymap(mode, lhs, rhs, opts)
-	-- Save the original keymap
-	local original_map = vim.api.nvim_get_keymap(mode)
-	local original_rhs = nil
-
-	for _, map in pairs(original_map) do
-		if map.lhs == lhs then
-			original_rhs = map.rhs
-			break
-		end
-	end
-
-	-- Set the new keymap
-	vim.api.nvim_set_keymap(mode, lhs, rhs, opts or {})
-
-	-- Return a function to restore the original keymap
-	return function()
-		if original_rhs then
-			vim.api.nvim_set_keymap(mode, lhs, original_rhs, opts or {})
-		else
-			-- If there was no original mapping, remove the keymap
-			vim.api.nvim_del_keymap(mode, lhs)
-		end
-	end
-end
-
 ghost_text.cleanup = function()
-	ghost_text.restore_keys()
+	require("nvim-ollama-pilot.keymaps").restore_keys()
 
 	local buf = vim.api.nvim_get_current_buf()
 
@@ -81,12 +49,7 @@ ghost_text.insert_ghost_text = function(text)
 	-- vim.api.nvim_buf_clear_namespace(Testing insert)
 	vim.api.nvim_buf_add_highlight(buf, ghost_text_ns_id, "GhostTextOllama", line, cursor_pos[2], cursor_pos[2] + #text)
 	-- buffer.set_temporary_keymaps()
-	ghost_text.restore_keys = replace_keymap(
-		"i",
-		"<Esc>",
-		'<C-o>:lua require("nvim-ollama-pilot.ghost_text").cleanup()<CR>',
-		{ noremap = true }
-	)
+	require("nvim-ollama-pilot.keymaps").set_ghost_text_keymap()
 end
 
 ghost_text.wrapped_insert_ghost_text = function(text)
@@ -95,66 +58,4 @@ ghost_text.wrapped_insert_ghost_text = function(text)
 	end)()
 end
 
---
--- function buffer.set_temporary_keymaps()
--- 	print("temp keymaps set")
--- 	original_keymaps["<Esc>"] = vim.api.nvim_get_keymap("i") -- for 'Escape' in normal mode
--- 	original_keymaps["<Tab>"] = vim.api.nvim_get_keymap("i") -- for 'Tab' in normal mode
---
--- 	vim.api.nvim_set_keymap(
--- 		"i",
--- 		"<Esc>",
--- 		":lua require('nvim-ollama-pilot.buffer').on_esc_press()<CR>",
--- 		{ noremap = true, silent = true }
--- 	)
--- 	vim.api.nvim_set_keymap(
--- 		"i",
--- 		"<Tab>",
--- 		":lua require('nvim-ollama-pilot.buffer').on_tab_press()<CR>",
--- 		{ noremap = true, silent = true }
--- 	)
--- end
---
--- function buffer.on_esc_press()
--- 	print("escape pressed")
--- 	buffer.revert_keymaps()
--- end
---
--- function buffer.on_tab_press()
--- 	print("tab pressed")
--- 	buffer.revert_keymaps()
--- end
---
--- function buffer.revert_keymaps()
--- 	-- Revert 'Escape' keymap
--- 	if original_keymaps["<Esc>"] then
--- 		vim.api.nvim_del_keymap("i", "<Esc>")
--- 		for _, mapping in ipairs(original_keymaps["<Esc>"]) do
--- 			if mapping.lhs == "<Esc>" then
--- 				vim.api.nvim_set_keymap(
--- 					"i",
--- 					mapping.lhs,
--- 					mapping.rhs,
--- 					{ noremap = mapping.noremap, silent = mapping.silent }
--- 				)
--- 			end
--- 		end
--- 	end
---
--- 	-- Revert 'Tab' keymap
--- 	if original_keymaps["<Tab>"] then
--- 		vim.api.nvim_del_keymap("i", "<Tab>")
--- 		for _, mapping in ipairs(original_keymaps["<Tab>"]) do
--- 			if mapping.lhs == "<Tab>" then
--- 				vim.api.nvim_set_keymap(
--- 					"i",
--- 					mapping.lhs,
--- 					mapping.rhs,
--- 					{ noremap = mapping.noremap, silent = mapping.silent }
--- 				)
--- 			end
--- 		end
--- 	end
--- end
--- k
 return ghost_text

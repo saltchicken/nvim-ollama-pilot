@@ -33,4 +33,105 @@ keymaps.set_keymaps = function()
 	})
 end
 
+keymaps.restore_keys = function()
+	print("Restore keys hasn't been set yet")
+end
+
+keymaps.set_ghost_text_keymap = function()
+	keymaps.restore_keys = require("nvim-ollama-pilot.keymaps").replace_keymap(
+		"i",
+		"<Esc>",
+		'<C-o>:lua require("nvim-ollama-pilot.ghost_text").cleanup()<CR>',
+		{ noremap = true }
+	)
+end
+
+keymaps.replace_keymap = function(mode, lhs, rhs, opts)
+	-- Save the original keymap
+	local original_map = vim.api.nvim_get_keymap(mode)
+	local original_rhs = nil
+
+	for _, map in pairs(original_map) do
+		if map.lhs == lhs then
+			original_rhs = map.rhs
+			break
+		end
+	end
+
+	-- Set the new keymap
+	vim.api.nvim_set_keymap(mode, lhs, rhs, opts or {})
+
+	-- Return a function to restore the original keymap
+	return function()
+		if original_rhs then
+			vim.api.nvim_set_keymap(mode, lhs, original_rhs, opts or {})
+		else
+			-- If there was no original mapping, remove the keymap
+			vim.api.nvim_del_keymap(mode, lhs)
+		end
+	end
+end
+
+-- local original_keymaps = {}
+--
+-- function buffer.set_temporary_keymaps()
+-- 	print("temp keymaps set")
+-- 	original_keymaps["<Esc>"] = vim.api.nvim_get_keymap("i") -- for 'Escape' in normal mode
+-- 	original_keymaps["<Tab>"] = vim.api.nvim_get_keymap("i") -- for 'Tab' in normal mode
+--
+-- 	vim.api.nvim_set_keymap(
+-- 		"i",
+-- 		"<Esc>",
+-- 		":lua require('nvim-ollama-pilot.buffer').on_esc_press()<CR>",
+-- 		{ noremap = true, silent = true }
+-- 	)
+-- 	vim.api.nvim_set_keymap(
+-- 		"i",
+-- 		"<Tab>",
+-- 		":lua require('nvim-ollama-pilot.buffer').on_tab_press()<CR>",
+-- 		{ noremap = true, silent = true }
+-- 	)
+-- end
+--
+-- function buffer.on_esc_press()
+-- 	print("escape pressed")
+-- 	buffer.revert_keymaps()
+-- end
+--
+-- function buffer.on_tab_press()
+-- 	print("tab pressed")
+-- 	buffer.revert_keymaps()
+-- end
+--
+-- function buffer.revert_keymaps()
+-- 	-- Revert 'Escape' keymap
+-- 	if original_keymaps["<Esc>"] then
+-- 		vim.api.nvim_del_keymap("i", "<Esc>")
+-- 		for _, mapping in ipairs(original_keymaps["<Esc>"]) do
+-- 			if mapping.lhs == "<Esc>" then
+-- 				vim.api.nvim_set_keymap(
+-- 					"i",
+-- 					mapping.lhs,
+-- 					mapping.rhs,
+-- 					{ noremap = mapping.noremap, silent = mapping.silent }
+-- 				)
+-- 			end
+-- 		end
+-- 	end
+--
+-- 	-- Revert 'Tab' keymap
+-- 	if original_keymaps["<Tab>"] then
+-- 		vim.api.nvim_del_keymap("i", "<Tab>")
+-- 		for _, mapping in ipairs(original_keymaps["<Tab>"]) do
+-- 			if mapping.lhs == "<Tab>" then
+-- 				vim.api.nvim_set_keymap(
+-- 					"i",
+-- 					mapping.lhs,
+-- 					mapping.rhs,
+-- 					{ noremap = mapping.noremap, silent = mapping.silent }
+-- 				)
+-- 			end
+-- 		end
+-- 	end
+-- end
 return keymaps
