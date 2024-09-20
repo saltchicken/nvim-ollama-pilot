@@ -1,32 +1,32 @@
 local ghost_text = {}
 
-ghost_text.state = {
-	ghost_text_visible = 0,
-}
+ghost_text.state = {}
 
-local ghost_text_ns_id
+local create_ghost_text_object = function(text, highlight_namespace)
+	ghost_text.state = {}
+	ghost_text.state.text = text
+	ghost_text.state.highlight_namespace = highlight_namespace
+end
 
 ghost_text.cleanup = function()
 	require("nvim-ollama-pilot.keymaps").restore_keys()
 
 	local buf = vim.api.nvim_get_current_buf()
 
-	print("Restoring the buffer")
 	local cursor_pos = vim.api.nvim_win_get_cursor(0)
 	local current_line = require("nvim-ollama-pilot.buffer").get_current_line()
-	print("Debugging current_line ", current_line)
-	-- local inserted_ghost_text = string.sub(current_line, 0, cursor_pos[2])
+	--
 	local pre_line = string.sub(current_line, 0, cursor_pos[2])
-	local post_line = string.sub(current_line, cursor_pos[2] + 1 + ghost_text.state.ghost_text_visible)
-	-- local inserted_ghost_text = string.sub(inserted_ghost_text, buffer.state.ghost_text_visible)
+	local post_line = string.sub(current_line, cursor_pos[2] + 1 + #ghost_text.state.text)
 	local restored_line = pre_line .. post_line
+
 	local line = cursor_pos[1] - 1
 	vim.api.nvim_buf_set_lines(buf, line, line + 1, false, { restored_line })
 end
 
 ghost_text.clear_ghost_text_highlight = function()
 	local buf = vim.api.nvim_get_current_buf()
-	vim.api.nvim_buf_clear_namespace(buf, ghost_text_ns_id, 0, -1)
+	vim.api.nvim_buf_clear_namespace(buf, ghost_text.state.highlight_namespace, 0, -1)
 end
 
 ghost_text.insert_ghost_text = function(text)
@@ -43,12 +43,14 @@ ghost_text.insert_ghost_text = function(text)
 	local pre_line = string.sub(current_line, 0, cursor_pos[2])
 	local post_line = string.sub(current_line, cursor_pos[2] + 1)
 	local line_with_ghost_text = pre_line .. text .. post_line
-	ghost_text.state.ghost_text_visible = #text
 	vim.api.nvim_buf_set_lines(buf, line, line + 1, false, { line_with_ghost_text })
-	ghost_text_ns_id = vim.api.nvim_create_namespace("ghost_text_ollama_pilot")
-	-- vim.api.nvim_buf_clear_namespace(Testing insert)
+
+	local ghost_text_ns_id = vim.api.nvim_create_namespace("ghost_text_ollama_pilot")
+
+	create_ghost_text_object(text, ghost_text_ns_id)
+
 	vim.api.nvim_buf_add_highlight(buf, ghost_text_ns_id, "GhostTextOllama", line, cursor_pos[2], cursor_pos[2] + #text)
-	-- buffer.set_temporary_keymaps()
+
 	require("nvim-ollama-pilot.keymaps").set_ghost_text_keymap()
 end
 
