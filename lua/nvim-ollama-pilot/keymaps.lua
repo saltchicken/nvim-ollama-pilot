@@ -42,6 +42,8 @@ keymaps.restore_keys = function()
 end
 
 keymaps.set_ghost_text_keymap = function()
+	-- Reset table
+	restore_functions = {}
 	-- Replace Escape
 	table.insert(
 		restore_functions,
