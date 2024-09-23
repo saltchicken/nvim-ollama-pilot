@@ -2,11 +2,12 @@ local core = {}
 
 core.run_current_line = function()
 	local line = require("nvim-ollama-pilot.buffer").get_current_line()
-	-- TODO: Replace nil with the guidance we want for current line as prompt
 	local guidance =
 		"You are being used for code completion. Only respond with the continuation of the given line of code."
-	-- require("nvim-ollama-pilot.request").request(line, nil)
-	require("nvim-ollama-pilot.request").request(line, guidance)
+	local callback = function(response)
+		require("nvim-ollama-pilot.ghost_text").wrapped_insert_ghost_text(response)
+	end
+	require("nvim-ollama-pilot.request").request(line, guidance, callback)
 end
 
 core.run_current_buffer = function()
@@ -16,14 +17,17 @@ core.run_current_buffer = function()
 		payload = payload .. line
 	end
 	local callback = function(response)
-		require("nvim-ollama-pilot.ghost_text").wrapped_insert_ghost_text(response)
+		print(response)
 	end
-	local response = require("nvim-ollama-pilot.request").request(payload, nil, callback)
+	require("nvim-ollama-pilot.request").request(payload, nil, callback)
 end
 
 core.run_current_selection = function()
 	local selection = require("nvim-ollama-pilot.buffer").get_current_selection()
-	require("nvim-ollama-pilot.request").request(selection, nil)
+	local callback = function(response)
+		print(response)
+	end
+	require("nvim-ollama-pilot.request").request(payload, nil, callback)
 end
 
 return core
