@@ -15,7 +15,19 @@ core.run_current_buffer = function()
 	for _, line in ipairs(buffer) do
 		payload = payload .. line
 	end
-	require("nvim-ollama-pilot.request").request(payload, nil)
+	-- local callback = function(response, error)
+	-- 	if error then
+	-- 		print(error)
+	-- 	else
+	-- 		local json = require("nvim-ollama-pilot.json")
+	-- 		local decoded_response = json.decode(response)
+	-- 		print("Analysis complete: ", decoded_response.response)
+	-- 	end
+	-- end
+	local action = function(response)
+		require("nvim-ollama-pilot.ghost_text").wrapped_insert_ghost_text(response)
+	end
+	local response = require("nvim-ollama-pilot.request").request(payload, nil, action)
 end
 
 core.run_current_selection = function()

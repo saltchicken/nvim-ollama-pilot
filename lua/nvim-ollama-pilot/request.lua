@@ -43,17 +43,30 @@ local function send_post_request(prompt, guidance, callback, opts)
 	}):start()
 end
 
-request.request = function(prompt, guidance)
-	send_post_request(prompt, guidance, function(response, error)
-		if error then
-			print(error)
-		else
-			local json = require("nvim-ollama-pilot.json")
-			local decoded_response = json.decode(response)
-			print("RESPONSE: ", decoded_response.response)
-			require("nvim-ollama-pilot.ghost_text").wrapped_insert_ghost_text(decoded_response.response)
-		end
-	end, request.opts)
+request.request = function(prompt, guidance, callback)
+	if callback then
+		send_post_request(prompt, guidance, function(response, error)
+			if error then
+				print(error)
+			else
+				local json = require("nvim-ollama-pilot.json")
+				local decoded_response = json.decode(response)
+				callback(decoded_response.response)
+			end
+		end, request.opts)
+	else
+		send_post_request(prompt, guidance, function(response, error)
+			if error then
+				print(error)
+			else
+				local json = require("nvim-ollama-pilot.json")
+				local decoded_response = json.decode(response)
+				print("DEFAULT CALLBACK RESPONSE: ", decoded_response.response)
+				-- return decoded_response.response
+				-- require("nvim-ollama-pilot.ghost_text").wrapped_insert_ghost_text(decoded_response.response)
+			end
+		end, request.opts)
+	end
 end
 
 return request
