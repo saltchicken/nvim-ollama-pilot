@@ -36,15 +36,6 @@ core.wrapped_create_modal = function(response)
 	end)()
 end
 
-local function tableFromString(inputString)
-	print("INPUT STRING: ", inputString)
-	local result = {}
-	for line in string.gmatch(inputString, "[^\r\n]+") do
-		table.insert(result, line)
-	end
-	return result
-end
-
 core.run_current_buffer = function()
 	local buffer = require("nvim-ollama-pilot.buffer").get_current_buffer()
 	local payload = ""
@@ -52,7 +43,7 @@ core.run_current_buffer = function()
 		payload = payload .. line
 	end
 	local callback = function(response)
-		local new_response = tableFromString(response)
+		local new_response = require("nvim-ollama-pilot.utils").tableFromString(response)
 		-- local new_response = string.match(response, "^[^\r\n]*")
 
 		response = new_response
@@ -64,9 +55,11 @@ end
 core.run_current_selection = function()
 	local selection = require("nvim-ollama-pilot.buffer").get_current_selection()
 	local callback = function(response)
-		print(response)
+		require("nvim-ollama-pilot.buffer").replace_current_line_and_insert_chunk(response)
 	end
-	require("nvim-ollama-pilot.request").request(payload, nil, callback)
+	local guidance =
+		"You are being given a request to write some code. Consider the following request only return the relevant code without any explanation."
+	require("nvim-ollama-pilot.request").request(selection, guidance, callback)
 end
 
 return core
