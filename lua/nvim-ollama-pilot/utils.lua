@@ -8,4 +8,17 @@ utils.tableFromString = function(inputString)
 	return result
 end
 
+utils.remove_code_prefix_and_suffix = function(text_table)
+	for i = #text_table, 1, -1 do
+		if text_table[i] then
+			if string.find(text_table[i], "```") then
+				table.remove(text_table, i)
+			end
+		else
+			print("What is wrong with :", text_table[i])
+		end
+	end
+	return text_table
+end
+
 return utils

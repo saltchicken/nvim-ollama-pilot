@@ -55,6 +55,8 @@ end
 core.run_current_selection = function()
 	local selection = require("nvim-ollama-pilot.buffer").get_current_selection()
 	local callback = function(response)
+		response = require("nvim-ollama-pilot.utils").tableFromString(response)
+		response = require("nvim-ollama-pilot.utils").remove_code_prefix_and_suffix(response)
 		require("nvim-ollama-pilot.buffer").replace_current_line_and_insert_chunk(response)
 	end
 	local guidance =

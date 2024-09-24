@@ -22,8 +22,7 @@ buffer.replace_current_line_and_insert_chunk = function(response)
 	vim.schedule_wrap(function()
 		local line_index = buffer.get_cursor_line()
 		local buf = vim.api.nvim_get_current_buf()
-		local new_response = require("nvim-ollama-pilot.utils").tableFromString(response)
-		vim.api.nvim_buf_set_lines(buf, line_index, line_index + 1, false, new_response)
+		vim.api.nvim_buf_set_lines(buf, line_index, line_index + 1, false, response)
 	end)()
 end
 
