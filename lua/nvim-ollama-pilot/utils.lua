@@ -9,6 +9,7 @@ utils.tableFromString = function(inputString)
 end
 
 utils.remove_code_prefix_and_suffix = function(text_table)
+	-- TODO: Make sure that input is a table
 	for i = #text_table, 1, -1 do
 		if text_table[i] then
 			if string.find(text_table[i], "```") then
