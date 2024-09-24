@@ -20,12 +20,18 @@ local function send_post_request(prompt, guidance, callback, opts)
 	if opts.debug then
 		print("Prompt String: ", prompt_string)
 	end
+	if not opts.server_address then
+		opts.server_address = "localhost"
+	end
+	if not opts.port then
+		opts.port = "11434"
+	end
 	Job:new({
 		command = "curl",
 		args = {
 			"-X",
 			"POST",
-			"http://localhost:11434/api/generate",
+			string.format("http://%s:%s/api/generate", opts.server_address, opts.port),
 			"-d",
 			prompt_string,
 			"-H",
