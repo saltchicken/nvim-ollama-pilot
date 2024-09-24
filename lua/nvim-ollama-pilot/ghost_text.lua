@@ -39,8 +39,11 @@ end
 ghost_text.insert_ghost_text = function(text)
 	-- TODO: Enable multiline ghost text
 	-- Return the first line of the output. Error if not
-	local new_text = string.match(text, "^[^\r\n]*")
-	text = new_text
+
+	-- local new_text = string.match(text, "^[^\r\n]*")
+
+	local new_text = require("nvim-ollama-pilot.utils").tableFromString(text)
+	text = new_text[1]
 	local buf = vim.api.nvim_get_current_buf()
 
 	local cursor_pos = vim.api.nvim_win_get_cursor(0)
