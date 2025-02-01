@@ -13,7 +13,7 @@ local function send_post_request(prompt, guidance, callback, opts)
 		guidance = ""
 	end
 	local prompt_string = string.format(
-		'{"model": "llama3.1", "prompt": "%s%s", "stream": false}',
+		'{"model": "deepseek-coder", "prompt": "%s%s", "stream": false}',
 		guidance,
 		prompt:gsub('"', '\\"'):gsub("\t", "\\t")
 	)
